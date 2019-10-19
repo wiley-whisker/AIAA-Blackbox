@@ -1,5 +1,22 @@
 /*
  * This code may or may not work. Untested. It is meant to write the actual airspeed to serial for verification.
+ * 
+ * An explination to the calculation can be found here:
+ * https://stackoverflow.com/questions/44007108/calculating-wind-speed-with-pitot-tube-using-arduino
+ * 
+ * Basically, analogRead() returns an integer in [0,1023]? that is a scallar of the pressure difference between
+ * the dynamic and static pressure readings of the sensor. 
+ * 
+ * What this line:
+ *     float voltage = (float) rawADC / 1023.0 * 5.0;
+ * is doing is dividing by the range of the possible retun values in order to get a float [0,1]. Then multiplying by 5V
+ * since that's the sensor's reference voltage. So at the end of this line we end up with: V_reading = percentage_diff * 5V
+ * 
+ * Next, we take that voltage reading and subtract the offset value specified by the sensor. This gives us dynamic pressure.
+ * 
+ * Finally, we perform the calculation for airspeed using the formula:
+ *     airspeed [m/s]? = sqrt(2 * dynamic-pressure [N/m^2]? / air-density [kg/m^3])
+ * 
  */
 
 // The offset voltage is 1.0V when there is no pressure difference.
